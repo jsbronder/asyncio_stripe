@@ -1,0 +1,9 @@
+*.swp
+.python-version
+.devrc-*
+
+.tox/
+dist/
+.virtualenv*
+__pycache__
+*.egg-info
