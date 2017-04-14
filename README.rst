@@ -2,6 +2,10 @@
 Stripe API bindings for Python 3.5+ using asyncio and aiohttp
 =============================================================
 
+.. image:: https://travis-ci.org/jsbronder/asyncio_stripe.svg?branch=master
+    :target: https://travis-ci.org/jsbronder/asyncio_stripe
+
+
 Introduction
 ------------
 As the header says, this is a wrapper around the Stripe API using asyncio_ and
