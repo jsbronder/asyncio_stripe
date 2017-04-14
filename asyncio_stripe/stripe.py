@@ -149,6 +149,23 @@ class Card(object):
     # three_d_secure = attr.ib()
 
 
+@attr.s(slots=True, frozen=True)
+class Refund(object):
+    id = attr.ib()
+    amount = attr.ib()
+    balance_transaction = attr.ib(metadata={'expandable': True})
+    charge = attr.ib(metadata={'expandable': True})
+    created = attr.ib()
+    currency = attr.ib()
+    metadata = attr.ib()
+    reason = attr.ib()
+    receipt_number = attr.ib()
+    status = attr.ib()
+
+    # In documentation but not seen
+    # description = attr.ib()
+
+
 class Client(object):
     def __init__(self, session, pk):
         '''
@@ -397,11 +414,70 @@ class Client(object):
             'delete',
             '/customers/%s/sources/%s' % (customer_id, source_id))
 
+    async def create_refund(self, charge_id, **kwds):
+        '''
+        Refund all or part of a charge.
+
+        Keyword arguments can be passed as defined by:
+        https://stripe.com/docs/api/curl#create_refund
+
+        @param charge_id - charge identifier
+        @return - Refund instance
+
+        @raises StripeError - Parsed errors from stripe
+        @raises ParseError  - Parsing Refund instance failed
+        '''
+        params = {'charge': charge_id}
+        params.update(kwds)
+        return await self._req('post', '/refunds', params)
+
+    async def retrieve_refund(self, refund_id):
+        '''
+        Retrieve a refund
+
+        @param refund_id    - refund identifier
+        @return - matching Refund instance
+
+        @raises StripeError - Parsed errors from stripe
+        @raises ParseError  - Parsing Refund instance failed
+        '''
+        return await self._req('get', '/refunds/%s' % (refund_id,))
+
+    async def update_refund(self, refund_id, metadata):
+        '''
+        Update the metadata on a refund.  Keys can be removed by setting the
+        value to None for that key.
+
+        @param refund_id    - refund identifier
+        @param metadata     - MultiDict of metadata
+        @return - updated Refund instance
+
+        @raises StripeError - Parsed errors from stripe
+        @raises ParseError  - Parsing Refund instance failed
+        '''
+        params = {'metadata': metadata}
+        return await self._req('post', '/refunds/%s' % (refund_id,), params)
+
+    async def list_refunds(self, **kwds):
+        '''
+        Return a list of previously refunds matching the given parameters.
+
+        Keyword arguments can be passed as defined by:
+        https://stripe.com/docs/api/curl#list_refunds
+
+        @return - list of matching Refund instances
+
+        @raises StripeError - Parsed errors from stripe
+        @raises ParseError  - Parsing Refund instance failed
+        '''
+        return await self._req('get', '/refunds', params=kwds)
+
 
 cls_map = {
     'charge': Charge,
     'customer': Customer,
     'card': Card,
+    'refund': Refund,
 }
 
 

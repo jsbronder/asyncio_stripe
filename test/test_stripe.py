@@ -495,6 +495,98 @@ class TestClient(unittest.TestCase):
         self.assertEqual(kwds['headers'], expected_headers)
         self.assertIs(r, None)
 
+    def test_create_refund(self):
+        resp = unittest.mock.MagicMock(spec=aiohttp.client_reqrep.ClientResponse)
+        resp.status = 200
+        resp.headers = multidict.CIMultiDict({'content-type': 'application/json'})
+        base.mkfuture(resp, self._session.request)
+        refund = json.loads(refund_json)
+        base.mkfuture(refund, resp.json)
+
+        expected_headers = {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Stripe-Version': '2017-02-14',
+        }
+
+        r = base.run_until(self._stripe.create_refund('ch_aabbcc', k='1', j=2))
+        args, kwds  = self._session.request.call_args
+        self.assertEqual(args[0], 'POST')
+        self.assertEqual(args[1], 'https://api.stripe.com/v1/refunds')
+        self.assertEqual(kwds['params'], {'charge': 'ch_aabbcc', 'k': '1', 'j': 2})
+        self.assertEqual(kwds['auth'].login, 'sekret_key')
+        self.assertEqual(kwds['auth'].password, '')
+        self.assertEqual(kwds['headers'], expected_headers)
+        self.assertEqual(r, stripe.convert_json_response(refund))
+
+    def test_retrieve_refund(self):
+        resp = unittest.mock.MagicMock(spec=aiohttp.client_reqrep.ClientResponse)
+        resp.status = 200
+        resp.headers = multidict.CIMultiDict({'content-type': 'application/json'})
+        base.mkfuture(resp, self._session.request)
+        refund = json.loads(refund_json)
+        base.mkfuture(refund, resp.json)
+
+        expected_headers = {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Stripe-Version': '2017-02-14',
+        }
+
+        r = base.run_until(self._stripe.retrieve_refund('re_aabbcc'))
+        args, kwds  = self._session.request.call_args
+        self.assertEqual(args[0], 'GET')
+        self.assertEqual(args[1], 'https://api.stripe.com/v1/refunds/re_aabbcc')
+        self.assertEqual(kwds['params'], {})
+        self.assertEqual(kwds['auth'].login, 'sekret_key')
+        self.assertEqual(kwds['auth'].password, '')
+        self.assertEqual(kwds['headers'], expected_headers)
+        self.assertEqual(r, stripe.convert_json_response(refund))
+
+    def test_update_refund(self):
+        resp = unittest.mock.MagicMock(spec=aiohttp.client_reqrep.ClientResponse)
+        resp.status = 200
+        resp.headers = multidict.CIMultiDict({'content-type': 'application/json'})
+        base.mkfuture(resp, self._session.request)
+        refund = json.loads(refund_json)
+        base.mkfuture(refund, resp.json)
+
+        expected_headers = {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Stripe-Version': '2017-02-14',
+        }
+
+        r = base.run_until(self._stripe.update_refund('re_aabbcc', {'k': '1', 'j': 2}))
+        args, kwds  = self._session.request.call_args
+        self.assertEqual(args[0], 'POST')
+        self.assertEqual(args[1], 'https://api.stripe.com/v1/refunds/re_aabbcc')
+        self.assertEqual(kwds['params'], {'metadata[k]': '1', 'metadata[j]': 2})
+        self.assertEqual(kwds['auth'].login, 'sekret_key')
+        self.assertEqual(kwds['auth'].password, '')
+        self.assertEqual(kwds['headers'], expected_headers)
+        self.assertEqual(r, stripe.convert_json_response(refund))
+
+    def test_list_refunds(self):
+        resp = unittest.mock.MagicMock(spec=aiohttp.client_reqrep.ClientResponse)
+        resp.status = 200
+        resp.headers = multidict.CIMultiDict({'content-type': 'application/json'})
+        base.mkfuture(resp, self._session.request)
+        refund = json.loads(refund_json)
+        base.mkfuture({'object': 'list', 'url': '/v1/refunds', 'has_more': False, 'data': [refund]}, resp.json)
+
+        expected_headers = {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Stripe-Version': '2017-02-14',
+        }
+
+        r = base.run_until(self._stripe.list_refunds(k='1', j=2))
+        args, kwds  = self._session.request.call_args
+        self.assertEqual(args[0], 'GET')
+        self.assertEqual(args[1], 'https://api.stripe.com/v1/refunds')
+        self.assertEqual(kwds['params'], {'k': '1', 'j': 2})
+        self.assertEqual(kwds['auth'].login, 'sekret_key')
+        self.assertEqual(kwds['auth'].password, '')
+        self.assertEqual(kwds['headers'], expected_headers)
+        self.assertEqual(r, [stripe.convert_json_response(refund)])
+
 
 # Test data scraped from API documentation
 charge_json = '''
@@ -657,6 +749,23 @@ card_json = '''
   },
   "name": null,
   "tokenization_method": null
+}
+'''
+
+refund_json = '''
+{
+  "id": "re_1A7X8Y2eZvKYlo2C51ze7VD4",
+  "object": "refund",
+  "amount": 1293,
+  "balance_transaction": "txn_1A7X8Y2eZvKYlo2CjcUTNcof",
+  "charge": "ch_1A7X8P2eZvKYlo2Ctk3V2U1B",
+  "created": 1491948418,
+  "currency": "usd",
+  "metadata": {
+  },
+  "reason": null,
+  "receipt_number": null,
+  "status": "succeeded"
 }
 '''
 
