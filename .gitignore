@@ -4,6 +4,6 @@
 
 .tox/
 dist/
-.virtualenv*
+virtualenv*
 __pycache__
 *.egg-info

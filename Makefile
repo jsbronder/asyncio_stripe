@@ -1,42 +1,29 @@
 PACKAGE = asyncio_stripe
 
-SHELL = /bin/bash
+SHELL = /usr/bin/env bash
 TOPDIR := $(shell readlink -f $(dir $(lastword $(MAKEFILE_LIST))))
-PYTHON_VERSION ?= 3.5
-VIRTUALENV ?= /usr/bin/env virtualenv
 
-ACTIVATE = source .virtualenv$(PYTHON_VERSION)/bin/activate
 TESTS = $(wildcard test/test_*.py)
 VERSION = $(shell python setup.py --version)
 MODULE_FILES = $(wildcard $(PACKAGE)/*.py)
 
-.PHONY: test dist venv
+.PHONY: test dist
 
-all: virtualenv$(PYTHON_VERSION)
+all:
 
 dist: dist/$(PACKAGE)-$(VERSION).tar.gz
 
-venv: .virtualenv$(PYTHON_VERSION)/setup
+requirements: requirements.txt requirements-test.txt
+	@pip install -r requirements.txt -r requirements-test.txt
 
-.virtualenv$(PYTHON_VERSION)/setup: requirements.txt requirements-test.txt
-	@$(VIRTUALENV) --python=python$(PYTHON_VERSION) .virtualenv$(PYTHON_VERSION)
-	$(ACTIVATE); pip install \
-			-r requirements.txt \
-			-r requirements-test.txt
-	touch .virtualenv$(PYTHON_VERSION)/setup
-
-flake: venv
-	@$(ACTIVATE); flake8 asyncio_stripe
-
-build:
-	$(ACTIVATE); python setup.py build
-
+flake:
+	@flake8 asyncio_stripe/
 
 test: flake
 	@failed=""; \
 	for test in $(TESTS); do \
 		echo "Testing $${test#*_}"; \
-		$(ACTIVATE); python $${test} --verbose; \
+		python $${test} --verbose; \
 		if [ $$? -ne 0 ]; then \
 			failed+=" $${test}"; \
 		fi; \
@@ -49,15 +36,17 @@ test: flake
 		echo "All tests passed."; \
 	fi
 
-dist/$(PACKAGE)-$(VERSION).tar.gz: venv $(MODULE_FILES) setup.py
-	$(ACTIVATE); python setup.py sdist
+dist/$(PACKAGE)-$(VERSION).tar.gz: $(MODULE_FILES) setup.py
+	python setup.py sdist
 
-dev-install: dist/$(PACKAGE)-$(VERSION).tar.gz
-	$(ACTIVATE); pip install --no-deps \
+install: dist
+	pip install --no-deps \
 		--upgrade --force-reinstall --no-index dist/$(PACKAGE)-$(VERSION).tar.gz
 
+uninstall:
+	pip uninstall --yes $(PACKAGE)
+
 clean:
-	rm -rf virtualenv[23]*
 	rm -rf build
 	rm -rf dist
 	rm -rf $(PACKAGE).egg-info
