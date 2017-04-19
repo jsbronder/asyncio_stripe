@@ -211,7 +211,7 @@ class TestClient(unittest.TestCase):
         base.mkfuture(charge, resp.json)
 
         r = base.run_until(self._stripe.create_charge(amount=103, currency='usd', k='1', j=2,
-            metadata={'md1': 'hi', 'md2': 'other'}))
+            metadata={'md1': 'hi', 'md2': 'other'}, tf=True))
         args, kwds  = self._session.request.call_args
         self.assertEqual(kwds['params'], {
             'amount': 103,
@@ -219,7 +219,8 @@ class TestClient(unittest.TestCase):
             'k': '1',
             'j': 2,
             'metadata[md1]': 'hi',
-            'metadata[md2]': 'other'})
+            'metadata[md2]': 'other',
+            'tf': 'true'})
 
     def test_create_charge(self):
         resp = unittest.mock.MagicMock(spec=aiohttp.client_reqrep.ClientResponse)

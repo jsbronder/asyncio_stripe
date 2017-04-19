@@ -205,6 +205,10 @@ class Client(object):
                 params['%s[%s]' % (key, subkey)] = v
             del params[key]
 
+        # Booleans to strings
+        for key in [k for k, v in params.items() if isinstance(v, bool)]:
+            params[key] = str(params[key]).lower()
+
         r = await self._session.request(
                 method.upper(),
                 url,
