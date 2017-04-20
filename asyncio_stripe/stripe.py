@@ -206,8 +206,10 @@ class Client(object):
             del params[key]
 
         # Booleans to strings
-        for key in [k for k, v in params.items() if isinstance(v, bool)]:
-            params[key] = str(params[key]).lower()
+        params.update({
+            k: str(v).lower()
+            for k, v in params.items()
+            if isinstance(v, bool)})
 
         r = await self._session.request(
                 method.upper(),
