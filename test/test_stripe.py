@@ -201,6 +201,7 @@ class TestClient(unittest.TestCase):
         self.assertEqual(exc.exception.code, 'missing')
         self.assertEqual(exc.exception.decline_code, '')
         self.assertEqual(exc.exception.param, 'source')
+        self.assertEqual(exc.exception.http_code, 404)
 
     def test_param_conversion(self):
         resp = unittest.mock.MagicMock(spec=aiohttp.client_reqrep.ClientResponse)

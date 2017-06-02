@@ -14,6 +14,7 @@ class StripeError(StripeException):
         self.code = None
         self.decline_code = None
         self.param = None
+        self.http_code = resp.status
 
         if isinstance(body, dict):
             err = body.get('error', {})
