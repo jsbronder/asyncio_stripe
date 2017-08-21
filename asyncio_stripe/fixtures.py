@@ -1,0 +1,41 @@
+from . import stripe
+
+card_source = stripe.Card(
+    address_city='Town',
+    address_country='US',
+    address_line1='1 Main St',
+    address_line1_check='pass',
+    address_line2='',
+    address_state='MA',
+    address_zip='01234',
+    address_zip_check='pass',
+    brand='Visa',
+    country='US',
+    customer='cus_aabbcc',
+    cvc_check='pass',
+    dynamic_last4=None,
+    exp_month=1,
+    exp_year=2099,
+    fingerprint='printedfingers',
+    funding='credit',
+    id='card_aabbcc',
+    last4='4242',
+    metadata={'k': 'v'},
+    name='Joe Cool',
+    tokenization_method=None)
+
+customer = stripe.Customer(
+    account_balance=0,
+    created=1488920544,
+    currency=None,
+    default_source=card_source.id,
+    delinquent=False,
+    description=None,
+    discount=None,
+    email='joe@invalid',
+    id='cus_aabbcc',
+    livemode=False,
+    metadata={'other_id': 12345},
+    shipping=None,
+    sources=[card_source],
+    subscriptions=[])
