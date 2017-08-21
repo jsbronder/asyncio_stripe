@@ -475,6 +475,29 @@ class TestClient(unittest.TestCase):
         self.assertEqual(kwds['headers'], expected_headers)
         self.assertEqual(r, stripe.convert_json_response(card))
 
+    def test_update_card(self):
+        resp = unittest.mock.MagicMock(spec=aiohttp.client_reqrep.ClientResponse)
+        resp.status = 200
+        resp.headers = multidict.CIMultiDict({'content-type': 'application/json'})
+        base.mkfuture(resp, self._session.request)
+        card = json.loads(card_json)
+        base.mkfuture(card, resp.json)
+
+        expected_headers = {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Stripe-Version': '2017-02-14',
+        }
+
+        r = base.run_until(self._stripe.update_card('cus_aabbcc', 'card_abc', metadata={'k': '1', 'j': 2}))
+        args, kwds  = self._session.request.call_args
+        self.assertEqual(args[0], 'POST')
+        self.assertEqual(args[1], 'https://api.stripe.com/v1/customers/cus_aabbcc/sources/card_abc')
+        self.assertEqual(kwds['params'], {'metadata[k]': '1', 'metadata[j]': 2})
+        self.assertEqual(kwds['auth'].login, 'sekret_key')
+        self.assertEqual(kwds['auth'].password, '')
+        self.assertEqual(kwds['headers'], expected_headers)
+        self.assertEqual(r, stripe.convert_json_response(card))
+
     def test_delete_card(self):
         resp = unittest.mock.MagicMock(spec=aiohttp.client_reqrep.ClientResponse)
         resp.status = 200

@@ -421,6 +421,25 @@ class Client(object):
             'delete',
             '/customers/%s/sources/%s' % (customer_id, source_id))
 
+    async def update_card(self, customer_id, source_id, **kwds):
+        '''
+        Update card details
+
+        Keyword arguments can be passed as defined by:
+        https://stripe.com/docs/api/curl#update_card]
+
+        @param customer_id  - customer identifier
+        @param source_id    - id of card to be updated
+        @return             - updated card
+
+        @raises StripeError - Parsed errors from stripe
+        @raises ParseError  - Parsing Card instance failed
+        '''
+        return await self._req(
+                'post',
+                '/customers/%s/sources/%s' % (customer_id, source_id),
+                params=kwds)
+
     async def create_refund(self, charge_id, **kwds):
         '''
         Refund all or part of a charge.
