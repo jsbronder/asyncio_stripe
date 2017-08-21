@@ -35,6 +35,7 @@ setuptools.setup(
             'Operating System :: OS Independent',
             'Programming Language :: Python :: 3 :: Only',
             'Programming Language :: Python :: 3.5',
+            'Programming Language :: Python :: 3.6',
             'Topic :: Internet :: WWW/HTTP',
             'Topic :: Software Development :: Libraries :: Python Modules',
         ]
