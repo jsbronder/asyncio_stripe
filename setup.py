@@ -11,7 +11,7 @@ def read(paths):
 
 setuptools.setup(
         name='asyncio_stripe',
-        version='0.1.2',
+        version='0.2.0',
         description='Asyncio Stripe API bindings',
         license='BSD',
         long_description=(read('README.rst')),
