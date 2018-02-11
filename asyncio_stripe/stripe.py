@@ -102,6 +102,7 @@ class Customer(object):
     description = attr.ib()
     discount = attr.ib()
     email = attr.ib()
+    invoice_prefix = attr.ib()
     livemode = attr.ib()
     metadata = attr.ib()
     shipping = attr.ib()

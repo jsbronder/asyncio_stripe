@@ -109,6 +109,7 @@ class TestClient(unittest.TestCase):
           'discount',
           'email',
           'livemode',
+          'invoice_prefix',
           'metadata',
           'shipping',
         )
@@ -708,6 +709,7 @@ customer_json = '''
   "discount": null,
   "email": "cquxunih7x@virtumedix.com",
   "livemode": false,
+  "invoice_prefix": "112233",
   "metadata": {
   },
   "shipping": null,

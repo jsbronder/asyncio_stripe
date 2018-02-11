@@ -34,6 +34,7 @@ customer = stripe.Customer(
     discount=None,
     email='joe@invalid',
     id='cus_aabbcc',
+    invoice_prefix='112233',
     livemode=False,
     metadata={'other_id': 12345},
     shipping=None,
