@@ -4,4 +4,4 @@ python:
 install:
     - pip install tox
 script: tox
-dist: trusty
+dist: precise
