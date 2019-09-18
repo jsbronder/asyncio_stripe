@@ -1,3 +1,5 @@
+import warnings
+
 import aiohttp
 import attr
 
@@ -176,6 +178,11 @@ class Client(object):
         @param session  - aiohttp session
         @param pk       - private stripe key
         '''
+        warnings.warn(
+            'asyncio_stripe is not actively maintained',
+            DeprecationWarning,
+            stacklevel=2)
+
         self._session = session
         self._auth = aiohttp.BasicAuth(pk)
         self._url = 'https://api.stripe.com/v1'
